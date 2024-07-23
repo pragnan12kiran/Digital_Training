@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        ul li {
+            cursor: pointer;
+            position: relative;
+            padding: 12px 8px 12px 40px;
+            background: #eee;
+            font-size: 18px;
+        }
+
+        ul li.checked::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+        }
+
+        .header {
+            background-color: #b77b77;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>My To-Do List</h2>
+        <input type="text" id="myInput" placeholder="Title...">
+        <button onclick="newElement()">Add</button>
+    </div>
+    <ul id="myUL">
+    </ul>
+
+    <script>
+        function newElement() {
+            var inputValue = document.getElementById("myInput").value;
+            if (inputValue.trim() !== "") {
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(inputValue));
+                document.getElementById("myUL").appendChild(li);
+                document.getElementById("myInput").value = "";
+            }
+        }
+
+        document.getElementById("myUL").addEventListener("click", function (e) {
+            if (e.target && e.target.nodeName === "LI") {
+                var newText = prompt("Update task:", e.target.innerText);
+                if (newText) {
+                    e.target.innerText = newText;
+                }
+            }
+        });
+
+        document.getElementById("myUL").addEventListener("click", function (e) {
+            if (e.target && e.target.nodeName === "LI") {
+                if (confirm("Are you sure you want to delete this task?")) {
+                    e.target.remove();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
