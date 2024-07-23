@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Book</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #baa0b0;
+            border-radius: 18px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+</style>
+</head>
+ 
+<body>
+<div class="container mt-5">
+<h2 class="mb-4">Contact Book</h2>
+<form id="contactForm" class="mb-3">
+<div class="mb-3">
+<input type="text" id="id1" class="form-control" placeholder="ID" required>
+</div>
+<div class="mb-3">
+<input type="text" id="name" class="form-control" placeholder="Name" required>
+</div>
+<div class="mb-3">
+<input type="text" id="phone" class="form-control" placeholder="Phone" required>
+</div>
+<button type="submit" class="btn btn-danger me-2">Add Contact</button>
+</form>
+<ul id="contactList" class="list-group"></ul>
+</div>
+<script>
+        class Contact {
+            constructor(id, name, phone) {
+                this.id = id;
+                this.name = name;
+                this.phone = phone;
+            }
+        }
+        class PhoneBook {
+            constructor() {
+                this.contacts = [];
+            }
+            addContact(contact) {
+                this.contacts.push(contact);
+            }
+            deleteContact(id) {
+                this.contacts = this.contacts.filter(con => con.id !== id);
+            }
+            update(contact) {
+                const foundIndex = this.contacts.findIndex(con => con.id === contact.id);
+                if (foundIndex !== -1) {
+                    this.contacts[foundIndex] = contact;
+                }
+            }
+            getAllContacts() {
+                return this.contacts;
+            }
+            getContactById(id) {
+                return this.contacts.find(con => con.id === id);
+            }
+        }
+        const myPhoneBook = new PhoneBook();
+const contactList = document.getElementById('contactList');
+const contactForm = document.getElementById('contactForm');
+const IdInput = document.getElementById('id1');
+const nameInput = document.getElementById('name');
+const phoneInput = document.getElementById('phone');
+contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name = nameInput.value;
+    const phone = phoneInput.value;
+    const id1 = parseInt(IdInput.value);
+    const newContact = new Contact(id1, name, phone);
+    myPhoneBook.addContact(newContact);
+    const listItem = document.createElement('li');
+    listItem.className = 'list-group-item';
+    listItem.innerHTML = `
+<span class="contact-id">${id1}</span>
+<span class="contact-name">${name}</span>
+<span class="contact-phone">${phone}</span>
+<button class="btn btn-danger btn-sm" data-contact-id="${id1}">Delete</button>
+<button class="btn btn-success btn-sm" data-contact-id="${id1}">Edit</button>
+    `;
+    contactList.appendChild(listItem);
+    nameInput.value = '';
+    phoneInput.value = '';
+    IdInput.value = '';
+    alert('Contact added successfully');
+});
+contactList.addEventListener('click', function (e) {
+    if (e.target.tagName === 'BUTTON') {
+        const contactId = parseInt(e.target.dataset.contactId);
+        if (e.target.textContent === 'Delete') {
+            myPhoneBook.deleteContact(contactId);
+            e.target.parentElement.remove();
+            alert('Contact deleted successfully');
+        } else if (e.target.textContent === 'Edit') {
+            const contact = myPhoneBook.getContactById(contactId);
+            if (contact) {
+                const newName = prompt('Enter new name:', contact.name);
+                const newPhone = prompt('Enter new phone number:', contact.phone);
+                if (newName && newPhone) {
+                    contact.name = newName;
+                    contact.phone = newPhone;
+                    e.target.parentElement.querySelector('.contact-name').textContent = newName;
+                    e.target.parentElement.querySelector('.contact-phone').textContent = newPhone;
+                    alert('Contact updated successfully');
+                }
+            }
+        }
+    }
+});
+ 
+ 
+        
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
